@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10140f">
+<meta name="description" content="BlockWorld — discover building ideas, Minecraft guides, block palettes, mods and resource packs.">
+<title>BlockWorld — Your Minecraft Universe</title>
+<link rel="preconnect" href="https://mcasset.cloud">
+<style>
+:root {
+  --bg:#10140f;
+  --panel:#191f18;
+  --panel2:#20281e;
+  --line:#303a2d;
+  --text:#f1f3eb;
+  --muted:#a4ad9d;
+  --green:#9fce65;
+  --green2:#c4ef8c;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:20;background:#10140fee;backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.nav{max-width:1240px;margin:auto;padding:15px 24px;display:flex;align-items:center;gap:28px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px;letter-spacing:-.7px;white-space:nowrap}
+.logo-mark{width:34px;height:34px;background:var(--green);display:grid;place-items:center;border-radius:8px;color:#15200e;font-size:19px;box-shadow:inset -5px -5px #669441}
+.logo span:last-child{color:var(--green)}
+.navlinks{display:flex;gap:23px;margin-left:auto}
+.navlinks a{font-size:13px;color:var(--muted);transition:.2s}
+.navlinks a:hover{color:var(--green2)}
+.nav-cta,.primary{background:var(--green);color:#15200e;font-weight:800;border:0;border-radius:9px;padding:11px 16px}
+.nav-cta:hover,.primary:hover{background:var(--green2)}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:white;border-radius:8px;padding:8px 11px}
+.wrap{max-width:1240px;margin:auto;padding-left:24px;padding-right:24px}
+.hero{padding-top:70px;padding-bottom:64px;display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center}
+.eyebrow{color:var(--green);text-transform:uppercase;letter-spacing:2.2px;font-size:11px;font-weight:900;display:flex;align-items:center;gap:9px}
+.eyebrow:before{content:"";width:22px;height:2px;background:var(--green)}
+h1{font-size:clamp(42px,6vw,76px);letter-spacing:-4px;line-height:.99;margin:20px 0}
+h1 span{color:var(--green)}
+.hero-copy{max-width:510px;font-size:16px;line-height:1.8;color:var(--muted)}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:27px}
+.secondary{border:1px solid #46513f;background:#1b2119;color:var(--text);border-radius:9px;padding:11px 16px;font-weight:750}
+.secondary:hover{border-color:var(--green);color:var(--green2)}
+.hero-meta{display:flex;gap:22px;margin-top:32px;color:var(--muted);font-size:12px}
+.hero-meta strong{color:var(--text);display:block;font-size:17px;margin-bottom:3px}
+.world-art{position:relative;min-height:390px;border:1px solid #394633;border-radius:20px;overflow:hidden;background:#273b36}
+.world-art>img{width:100%;height:390px;object-fit:cover;display:block}
+.world-overlay{position:absolute;inset:0;background:linear-gradient(0deg,#10140f 0%,transparent 65%),linear-gradient(90deg,#10140f55,transparent)}
+.world-label{position:absolute;bottom:23px;left:24px;right:24px}
+.world-label small{color:var(--green2);font-weight:800;letter-spacing:1.8px;text-transform:uppercase}
+.world-label h2{margin:8px 0;font-size:25px}
+.world-label p{margin:0;color:#c0cabb;font-size:13px}
+.floating-tag{position:absolute;right:16px;top:16px;padding:10px 12px;background:#111810dc;border:1px solid #53664a;border-radius:10px;font-size:12px;font-weight:750}
+.section{padding-top:45px;padding-bottom:48px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:23px}
+.kicker{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-weight:900}
+h2{letter-spacing:-1px}
+.section h2{font-size:30px;margin:8px 0 0}
+.section-desc{color:var(--muted);font-size:13px;line-height:1.7;margin:8px 0 0}
+.text-link{font-size:13px;color:var(--green2);font-weight:800;white-space:nowrap}
+.feature-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.feature{padding:20px;border-radius:var(--radius);border:1px solid var(--line);background:var(--panel);transition:transform .2s,border-color .2s}
+.feature:hover{transform:translateY(-3px);border-color:#718d5b}
+.feature-icon{width:43px;height:43px;border-radius:11px;background:#2a3824;display:grid;place-items:center;font-size:21px;margin-bottom:18px}
+.feature h3{font-size:15px;margin:0 0 8px}
+.feature p{color:var(--muted);font-size:12px;line-height:1.7;margin:0 0 17px}
+.feature a{color:var(--green2);font-size:12px;font-weight:800}
+.catalog{background:#151a14;border-top:1px solid #222a20;border-bottom:1px solid #222a20}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.search{flex:1;min-width:210px;position:relative}
+.search input{width:100%;padding:13px 15px;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:white;outline:none}
+.search input:focus{border-color:var(--green)}
+.filters{display:flex;gap:7px;flex-wrap:wrap}
+.filter{background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:10px 13px;border-radius:9px;font-size:12px;font-weight:750}
+.filter.active,.filter:hover{background:#2a3922;color:var(--green2);border-color:#5e7948}
+.card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .2s,border-color .2s}
+.item:hover{transform:translateY(-3px);border-color:#647c51}
+.item-image{height:180px;position:relative;background:#252e21;overflow:hidden}
+.item-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.item:hover .item-image img{transform:scale(1.04)}
+.item-tag{position:absolute;top:12px;left:12px;background:#10140fe8;border:1px solid #46513e;padding:6px 9px;border-radius:6px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;font-weight:850}
+.item-body{padding:17px}
+.item-body h3{font-size:16px;margin:0 0 8px}
+.item-body p{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 17px;min-height:41px}
+.item-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.item-type{font-size:11px;color:#aab59f}
+.small-btn{border:1px solid #46513f;background:#232c1f;color:var(--green2);border-radius:7px;padding:8px 11px;font-size:11px;font-weight:850}
+.small-btn:hover{background:#304128}
+.empty{grid-column:1/-1;border:1px dashed #485342;border-radius:12px;padding:35px;text-align:center;color:var(--muted)}
+.palette-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:26px;align-items:start}
+.palette-panel{padding:23px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.palette-panel label{display:block;color:var(--muted);font-size:12px;margin:16px 0 8px}
+.palette-panel select{width:100%;padding:12px;background:#10140f;border:1px solid var(--line);color:var(--text);border-radius:9px}
+.palette-panel .primary{margin-top:16px;width:100%}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.swatch{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.swatch img{width:100%;aspect-ratio:1;object-fit:cover;image-rendering:pixelated;border-radius:7px;background:#252e21}
+.swatch p{font-size:10px;color:var(--muted);margin:9px 0 2px;overflow-wrap:anywhere}
+.swatch strong{font-size:11px}
+.palette-note{font-size:12px;line-height:1.7;color:var(--muted);margin-top:15px}
+.guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.guide{padding:22px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.guide .number{font-size:11px;color:var(--green);font-weight:900;letter-spacing:1px}
+.guide h3{font-size:16px;margin:12px 0 8px}
+.guide p{font-size:12px;color:var(--muted);line-height:1.8;margin:0}
+.cta{margin-top:22px;margin-bottom:60px;padding:30px;border:1px solid #46543b;border-radius:18px;background:linear-gradient(110deg,#263820,#192318 70%);display:flex;align-items:center;justify-content:space-between;gap:25px}
+.cta h2{font-size:27px;margin:0 0 8px}
+.cta p{font-size:13px;color:#c0cbb7;margin:0;line-height:1.7}
+footer{border-top:1px solid var(--line);padding:28px 24px;color:var(--muted);font-size:11px}
+.footer-inner{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+footer strong{color:var(--text)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e2f4d2;color:#182315;border-radius:10px;padding:13px 18px;font-size:13px;font-weight:800;z-index:50;transition:.25s;box-shadow:0 10px 35px #0006}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:850px){
+ .navlinks{display:none;position:absolute;top:64px;left:0;right:0;padding:18px 24px;background:#10140f;border-bottom:1px solid var(--line);flex-direction:column;gap:18px}
+ .navlinks.open{display:flex}
+ .menu-btn{display:block;margin-left:auto}
+ .nav-cta{display:none}
+ .hero{grid-template-columns:1fr;padding-top:45px;gap:28px}
+ .world-art,.world-art>img{min-height:300px;height:300px}
+ .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .palette-layout{grid-template-columns:1fr}
+ .guide-grid{grid-template-columns:1fr}
+}
+@media(max-width:540px){
+ .wrap{padding-left:17px;padding-right:17px}
+ .nav{padding:12px 17px}
+ h1{font-size:48px;letter-spacing:-2.5px}
+ .hero{padding-top:37px;padding-bottom:35px}
+ .hero-meta{gap:17px}
+ .section{padding-top:35px;padding-bottom:36px}
+ .section-head{align-items:start;flex-direction:column}
+ .section h2{font-size:26px}
+ .feature-grid,.card-grid{grid-template-columns:1fr}
+ .item-image{height:205px}
+ .swatches{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cta{align-items:flex-start;flex-direction:column;padding:24px}
+ .world-art,.world-art>img{height:260px;min-height:260px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <nav class="nav">
+    <a class="logo" href="#home" aria-label="BlockWorld home"><span class="logo-mark">▦</span> BLOCK<span>WORLD</span></a>
+    <div class="navlinks" id="navlinks">
+      <a href="#explore">Explore</a>
+      <a href="#discover">Discover</a>
+      <a href="#palette">Block Palette</a>
+      <a href="#guides">Guides</a>
+    </div>
+    <a class="nav-cta" href="#discover">Explore the world ↗</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation">☰</button>
+  </nav>
+</header>
+
+<main>
+<section class="hero wrap" id="home">
+  <div>
+    <div class="eyebrow">Your world. Your rules.</div>
+    <h1>MAKE YOUR<br>NEXT WORLD<br><span>UNFORGETTABLE.</span></h1>
+    <p class="hero-copy">Your creative hub for Minecraft inspiration. Discover new building styles, explore block combinations, learn useful techniques and find your next project.</p>
+    <div class="hero-actions">
+      <a class="primary" href="#discover">Explore resources ↗</a>
+      <a class="secondary" href="#palette">Create a block palette</a>
+    </div>
+    <div class="hero-meta">
+      <div><strong>01</strong>Get inspired</div>
+      <div><strong>02</strong>Build smarter</div>
+      <div><strong>03</strong>Create your world</div>
+    </div>
+  </div>
+  <div class="world-art">
+    <img src="https://mcasset.cloud/1.21.4/assets/minecraft/textures/block/grass_block_top.png" alt="Minecraft grass block texture" onerror="this.src='https://minecraft.wiki/images/Grass_Block_JE7_BE6.png'">
+    <div class="world-overlay"></div>
+    <div class="floating-tag">✦ CREATIVE MODE</div>
+    <div class="world-label">
+      <small>THE BLOCKWORLD EXPERIENCE</small>
+      <h2>Every block has potential.</h2>
+      <p>Ideas, tools and inspiration for your next adventure.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section wrap" id="explore">
+  <div class="section-head">
+    <div><div class="kicker">Find your next project</div><h2>Explore the universe</h2><p class="section-desc">Everything you need to turn a blank world into something amazing.</p></div>
+  </div>
+  <div class="feature-grid">
+    <article class="feature"><div class="feature-icon">▦</div><h3>Build Inspiration</h3><p>Explore concepts for houses, bases, cities and detailed landscapes.</p><a href="#discover" data-jump="Builds">Explore builds ↗</a></article>
+    <article class="feature"><div class="feature-icon">◈</div><h3>Mods & Add-ons</h3><p>Discover ideas for expanding your world and changing how you play.</p><a href="#discover" data-jump="Mods">Explore mods ↗</a></article>
+    <article class="feature"><div class="feature-icon">▧</div><h3>Resource Packs</h3><p>Learn how textures and visual styles can transform a world.</p><a href="#discover" data-jump="Textures">Explore textures ↗</a></article>
+    <article class="feature"><div class="feature-icon">⌘</div><h3>Guides & Tips</h3><p>Pick up practical building techniques and creative workflows.</p><a href="#guides">Read guides ↗</a></article>
+  </div>
+</section>
+
+<section class="section catalog" id="discover">
+<div class="wrap">
+  <div class="section-head">
+    <div><div class="kicker">Curated for builders</div><h2>Discover something new</h2><p class="section-desc">Search the collection or select a category to narrow your ideas.</p></div>
+    <span class="text-link" id="resultCount">9 discoveries</span>
+  </div>
+  <div class="controls">
+    <div class="search"><input id="searchInput" type="search" placeholder="Search builds, mods, textures..." aria-label="Search discoveries"></div>
+    <div class="filters" id="filters">
+      <button class="filter active" data-filter="All">All</button>
+      <button class="filter" data-filter="Builds">Builds</button>
+      <button class="filter" data-filter="Mods">Mods</button>
+      <button class="filter" data-filter="Textures">Textures</button>
+      <button class="filter" data-filter="Guides">Guides</button>
+    </div>
+  </div>
+  <div class="card-grid" id="cardGrid"></div>
+</div>
+</section>
+
+<section class="section wrap" id="palette">
+  <div class="section-head">
+    <div><div class="kicker">Design your build</div><h2>Block palette generator</h2><p class="section-desc">Choose a building style and generate a set of matching Minecraft block textures.</p></div>
+  </div>
+  <div class="palette-layout">
+    <div class="palette-panel">
+      <h3 style="margin:0">Create your combination</h3>
+      <p class="section-desc">Use the palette as a starting point for your next build.</p>
+      <label for="paletteStyle">Building style</label>
+      <select id="paletteStyle">
+        <option value="forest">Forest Cabin</option>
+        <option value="medieval">Medieval Castle</option>
+        <option value="modern">Modern House</option>
+        <option value="nether">Nether Fortress</option>
+        <option value="ocean">Ocean Base</option>
+      </select>
+      <label for="paletteMood">Palette mood</label>
+      <select id="paletteMood">
+        <option value="balanced">Balanced</option>
+        <option value="dark">Dark & Moody</option>
+        <option value="natural">Natural</option>
+      </select>
+      <button class="primary" id="generatePalette">Generate palette ↗</button>
+      <p class="palette-note">Textures are loaded from a public Minecraft asset archive. If an image does not load, try generating the palette again or select another style.</p>
+    </div>
+    <div>
+      <div class="swatches" id="swatches"></div>
+      <p class="palette-note" id="paletteDescription">A natural mix of wood, stone and greenery for a cozy build.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section wrap" id="guides">
+  <div class="section-head">
+    <div><div class="kicker">Improve your builds</div><h2>Small details. Big difference.</h2><p class="section-desc">Three practical principles to make your next Minecraft project feel more complete.</p></div>
+  </div>
+  <div class="guide-grid">
+    <article class="guide"><div class="number">GUIDE 01 / PLANNING</div><h3>Start with a silhouette</h3><p>Sketch the outline of your build first. Add height variation, smaller extensions and a clear entrance before working on details.</p></article>
+    <article class="guide"><div class="number">GUIDE 02 / TEXTURE</div><h3>Mix materials thoughtfully</h3><p>Choose a main block, a supporting material and one accent. Use variations to add depth without making the build feel random.</p></article>
+    <article class="guide"><div class="number">GUIDE 03 / DETAIL</div><h3>Make the surroundings count</h3><p>Paths, lighting, plants and terrain help a structure feel connected to the world around it. Leave space for the environment.</p></article>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="cta">
+    <div><h2>Your next build starts here.</h2><p>Pick an idea, choose your blocks and make the world your own.</p></div>
+    <a class="primary" href="#discover">Find inspiration ↗</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div><strong>BLOCKWORLD</strong> — Build. Explore. Create.</div>
+    <div>Fan-made Minecraft inspiration project. Not affiliated with Mojang or Microsoft.</div>
+    <div>© <span id="year"></span> BlockWorld</div>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const texture = name =>
+  `https://mcasset.cloud/1.21.4/assets/minecraft/textures/block/${name}.png`;
+
+const discoveries = [
+  {title:"Forest Survival Cabin",category:"Builds",type:"Build inspiration",description:"A cozy cabin concept combining spruce wood, stone and natural surroundings.",image:"oak_planks",tag:"BUILD IDEA",details:"Start with a compact stone foundation. Build the walls with spruce or oak, add a steep roof, then use trapdoors, fences and lanterns for detail."},
+  {title:"Medieval Castle",category:"Builds",type:"Architecture",description:"Plan towers, defensive walls and a strong silhouette for a medieval base.",image:"stone_bricks",tag:"ARCHITECTURE",details:"Begin with the outer wall and corner towers. Mix stone bricks with cracked and mossy variants. Use height changes to make the skyline interesting."},
+  {title:"Modern House",category:"Builds",type:"Modern architecture",description:"Clean shapes, contrasting materials and large windows for a modern home.",image:"quartz_block",tag:"BUILD IDEA",details:"Use simple rectangular forms. Combine quartz, concrete, glass and dark wood. Offset the upper floor and add landscaping around the entrance."},
+  {title:"Nature Block Palette",category:"Textures",type:"Block collection",description:"A natural starting point for forests, gardens, paths and countryside builds.",image:"moss_block",tag:"BLOCK PALETTE",details:"Try moss, grass, oak planks and stone. Vary the ground texture and use leaves and logs to blend structures into the landscape."},
+  {title:"Nether Fortress Concept",category:"Builds",type:"Dark architecture",description:"Create an imposing fortress with deep red and dark contrasting materials.",image:"nether_bricks",tag:"DARK BUILD",details:"Use nether bricks as the main material. Add red nether brick accents, basalt pillars and carefully placed lighting for depth."},
+  {title:"Resource Pack Basics",category:"Textures",type:"Visual customisation",description:"Understand how texture packs change the look and feel of your world.",image:"glass",tag:"TEXTURES",details:"Resource packs can replace block, item, sound and interface assets. Always check the Minecraft version and whether the pack supports Java or Bedrock."},
+  {title:"Explore Modded Worlds",category:"Mods",type:"Mod inspiration",description:"Plan a modded playthrough around exploration, building or new challenges.",image:"amethyst_block",tag:"MOD IDEAS",details:"Choose mods that work with your game version and loader. Back up your world before adding or removing mods, and read each project's installation instructions."},
+  {title:"Build with Depth",category:"Guides",type:"Building technique",description:"Use layers, recesses and material changes to give flat walls more character.",image:"bricks",tag:"BUILD GUIDE",details:"Move windows slightly inward, add pillars at intervals and combine full blocks with stairs or slabs. Test the shape from several angles."},
+  {title:"Ocean Base",category:"Builds",type:"Underwater architecture",description:"Create an underwater base with glass, prismarine and layered lighting.",image:"prismarine_bricks",tag:"BUILD IDEA",details:"Choose a simple geometric shape, plan the entry before building and combine glass with prismarine. Keep the interior bright and easy to navigate."}
+];
+
+let activeFilter = "All";
+const grid = document.getElementById("cardGrid");
+const searchInput = document.getElementById("searchInput");
+const count = document.getElementById("resultCount");
+
+function renderCards(){
+  const query = searchInput.value.trim().toLowerCase();
+  const items = discoveries.filter(item =>
+    (activeFilter === "All" || item.category === activeFilter) &&
+    `${item.title} ${item.category} ${item.type} ${item.description}`.toLowerCase().includes(query)
+  );
+  count.textContent = `${items.length} ${items.length === 1 ? "discovery" : "discoveries"}`;
+  if(!items.length){
+    grid.innerHTML = '<div class="empty">No results found. Try another search or category.</div>';
+    return;
+  }
+  grid.innerHTML = items.map(item => `
+    <article class="item">
+      <div class="item-image">
+        <img src="${texture(item.image)}" alt="${item.title} Minecraft block texture" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='#283525'">
+        <span class="item-tag">${item.tag}</span>
+      </div>
+      <div class="item-body">
+        <h3>${item.title}</h3>
+        <p>${item.description}</p>
+        <div class="item-foot">
+          <span class="item-type">${item.type}</span>
+          <button class="small-btn" data-detail="${discoveries.indexOf(item)}">View details ↗</button>
+        </div>
+      </div>
+    </article>`).join("");
+}
+
+document.getElementById("filters").addEventListener("click", event => {
+  const btn = event.target.closest("[data-filter]");
+  if(!btn) return;
+  activeFilter = btn.dataset.filter;
+  document.querySelectorAll(".filter").forEach(el => el.classList.toggle("active", el === btn));
+  renderCards();
+});
+searchInput.addEventListener("input", renderCards);
+
+function showToast(message){
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+grid.addEventListener("click", event => {
+  const btn = event.target.closest("[data-detail]");
+  if(!btn) return;
+  const item = discoveries[Number(btn.dataset.detail)];
+  if(!item) return;
+  showToast(item.title + " — " + item.details);
+});
+
+document.querySelectorAll("[data-jump]").forEach(link => {
+  link.addEventListener("click", () => {
+    activeFilter = link.dataset.jump;
+    document.querySelectorAll(".filter").forEach(el => el.classList.toggle("active", el.dataset.filter === activeFilter));
+    renderCards();
+  });
+});
+
+const palettes = {
+  forest:{
+    description:"A warm, natural palette for cabins, gardens and woodland bases.",
+    blocks:[["Oak Planks","oak_planks"],["Spruce Planks","spruce_planks"],["Moss Block","moss_block"],["Stone Bricks","stone_bricks"]]
+  },
+  medieval:{
+    description:"Strong stone textures with dark timber for castles and old villages.",
+    blocks:[["Stone Bricks","stone_bricks"],["Cobblestone","cobblestone"],["Spruce Planks","spruce_planks"],["Deepslate Bricks","deepslate_bricks"]]
+  },
+  modern:{
+    description:"A clean, restrained selection for modern homes and minimal builds.",
+    blocks:[["Quartz Block","quartz_block"],["White Concrete","white_concrete"],["Black Concrete","black_concrete"],["Glass","glass"]]
+  },
+  nether:{
+    description:"Dark red materials with volcanic accents for dramatic Nether builds.",
+    blocks:[["Nether Bricks","nether_bricks"],["Red Nether Bricks","red_nether_bricks"],["Basalt","basalt"],["Blackstone","blackstone"]]
+  },
+  ocean:{
+    description:"Cool aquatic materials for underwater bases and coastal architecture.",
+    blocks:[["Prismarine","prismarine"],["Prismarine Bricks","prismarine_bricks"],["Dark Prismarine","dark_prismarine"],["Sea Lantern","sea_lantern"]]
+  }
+};
+
+function generatePalette(){
+  const style = document.getElementById("paletteStyle").value;
+  const mood = document.getElementById("paletteMood").value;
+  let blocks = [...palettes[style].blocks];
+  if(mood === "dark"){
+    blocks = [["Deepslate Bricks","deepslate_bricks"],["Blackstone","blackstone"],["Polished Blackstone","polished_blackstone"],["Basalt","basalt"]];
+  }else if(mood === "natural"){
+    blocks = [["Moss Block","moss_block"],["Oak Planks","oak_planks"],["Stone","stone"],["Spruce Planks","spruce_planks"]];
+  }
+  document.getElementById("swatches").innerHTML = blocks.map(([name,file]) => `
+    <div class="swatch">
+      <img src="${texture(file)}" alt="${name} texture" loading="lazy" onerror="this.style.opacity='.25'">
+      <p>${name}</p>
+      <strong>Block</strong>
+    </div>`).join("");
+  document.getElementById("paletteDescription").textContent = palettes[style].description;
+}
+document.getElementById("generatePalette").addEventListener("click",generatePalette);
+document.getElementById("paletteStyle").addEventListener("change",generatePalette);
+document.getElementById("paletteMood").addEventListener("change",generatePalette);
+
+document.getElementById("menuBtn").addEventListener("click", () => {
+  document.getElementById("navlinks").classList.toggle("open");
+});
+document.querySelectorAll("#navlinks a").forEach(a => a.addEventListener("click", () => {
+  document.getElementById("navlinks").classList.remove("open");
+}));
+document.getElementById("year").textContent = new Date().getFullYear();
+
+renderCards();
+generatePalette();
+</script>
+</body>
+</html>

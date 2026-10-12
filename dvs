@@ -1,0 +1,471 @@
+
+(() => {
+  const app = document.getElementById("app");
+  const items = window.BW_ITEMS || [];
+  const categories = {
+    builds: ["Builds", "Building inspiration, architectural concepts and material ideas."],
+    mods: ["Mods", "Discover modification ideas and learn how to check compatibility."],
+    "resource-packs": ["Resource Packs", "Explore texture styles and visual customisation."],
+    shaders: ["Shaders", "Learn about lighting, reflections and visual effects."],
+    maps: ["Maps", "Find map ideas, adventure concepts and installation guidance."],
+    guides: ["Guides", "Practical tutorials for builders and survival players."],
+    seeds: ["Seeds", "Explore seed-finding tips and verified-world checklists."]
+  };
+
+  const textures = {
+    "Forest Survival Cabin": "oak_planks",
+    "The Medieval Fortress": "stone_bricks",
+    "Modern Hillside House": "quartz_block",
+    "Cherry Grove Village": "cherry_planks",
+    "Create — Engineering Ideas": "copper_block",
+    "World Exploration Mods": "amethyst_block",
+    "Decoration & Furniture": "bookshelf",
+    "Faithful Visual Style": "grass_block_top",
+    "Cartoon Colour Style": "white_concrete",
+    "Dark Fantasy Textures": "deepslate_bricks",
+    "Cinematic Lighting": "sea_lantern",
+    "Water & Reflections": "prismarine",
+    "Survival Island Challenge": "sand",
+    "Fantasy Adventure City": "stone_bricks",
+    "Build Walls With Depth": "bricks",
+    "Choose Better Block Palettes": "moss_block",
+    "Plan Your First Survival Base": "crafting_table",
+    "Mountain Landscape Search": "snow",
+    "Village Starter Search": "oak_planks"
+  };
+
+  const palettes = {
+    Forest: ["Oak Planks", "Spruce Planks", "Moss Block", "Stone Bricks", "Oak Leaves", "Cobblestone"],
+    Medieval: ["Stone Bricks", "Cracked Stone Bricks", "Spruce Planks", "Deepslate Bricks", "Cobblestone", "Lantern"],
+    Modern: ["Quartz Block", "White Concrete", "Black Concrete", "Glass", "Smooth Stone", "Dark Oak Planks"],
+    Nether: ["Nether Bricks", "Red Nether Bricks", "Basalt", "Blackstone", "Polished Blackstone", "Shroomlight"],
+    Ocean: ["Prismarine", "Prismarine Bricks", "Dark Prismarine", "Sea Lantern", "Glass", "Stone Bricks"],
+    Natural: ["Moss Block", "Oak Planks", "Stone", "Spruce Planks", "Oak Leaves", "Dirt"]
+  };
+
+  const textureFile = {
+    "Oak Planks": "oak_planks", "Spruce Planks": "spruce_planks",
+    "Moss Block": "moss_block", "Stone Bricks": "stone_bricks",
+    "Oak Leaves": "oak_leaves", "Cobblestone": "cobblestone",
+    "Cracked Stone Bricks": "cracked_stone_bricks", "Deepslate Bricks": "deepslate_bricks",
+    "Lantern": "lantern", "Quartz Block": "quartz_block", "White Concrete": "white_concrete",
+    "Black Concrete": "black_concrete", "Glass": "glass", "Smooth Stone": "smooth_stone",
+    "Dark Oak Planks": "dark_oak_planks", "Nether Bricks": "nether_bricks",
+    "Red Nether Bricks": "red_nether_bricks", "Basalt": "basalt", "Blackstone": "blackstone",
+    "Polished Blackstone": "polished_blackstone", "Shroomlight": "shroomlight",
+    "Prismarine": "prismarine", "Prismarine Bricks": "prismarine_bricks",
+    "Dark Prismarine": "dark_prismarine", "Sea Lantern": "sea_lantern",
+    "Stone": "stone", "Dirt": "dirt", "Snow": "snow",
+    "Cherry Planks": "cherry_planks", "Copper Blocks": "copper_block",
+    "Bookshelves": "bookshelf", "Crafting Table": "crafting_table"
+  };
+
+  const textureURL = block =>
+    "https://mcasset.cloud/1.21.4/assets/minecraft/textures/block/" +
+    (textureFile[block] || block) + ".png";
+
+  function getFavorites() {
+    try { return JSON.parse(localStorage.getItem("bw-favorites") || "[]"); }
+    catch { return []; }
+  }
+  function saveFavorites(list) {
+    try { localStorage.setItem("bw-favorites", JSON.stringify(list)); }
+    catch { toast("Browser storage is unavailable on this device."); }
+  }
+  function toast(message) {
+    const el = document.getElementById("toast");
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => el.classList.remove("show"), 2600);
+  }
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[char]);
+  }
+  function imageFor(item) {
+    const file = textures[item.title];
+    return file ? textureURL(file) : "";
+  }
+  function card(item) {
+    const saved = getFavorites().includes(item.id);
+    const image = imageFor(item);
+    return `
+      <article class="card">
+        <a href="#detail/${item.category}/${item.id}" class="card-art" aria-label="View ${escapeHTML(item.title)}">
+          ${image ? `<img loading="lazy" src="${image}" alt="${escapeHTML(item.title)} block texture" onerror="this.style.display='none'">` : `<span class="big-symbol">${escapeHTML(item.symbol || "▦")}</span>`}
+          <span class="card-tag">${escapeHTML(item.tag || item.category)}</span>
+        </a>
+        <div class="card-body">
+          <h3><a href="#detail/${item.category}/${item.id}">${escapeHTML(item.title)}</a></h3>
+          <p>${escapeHTML(item.description)}</p>
+          <div class="card-foot">
+            <span class="card-type">${escapeHTML(item.type || item.category)}</span>
+            <div>
+              <button class="small-btn" data-favorite="${item.id}" aria-label="Toggle favorite">${saved ? "♥ Saved" : "♡ Save"}</button>
+              <a class="small-btn" href="#detail/${item.category}/${item.id}">Details ↗</a>
+            </div>
+          </div>
+        </div>
+      </article>`;
+  }
+  function grid(list) {
+    return list.length
+      ? `<div class="card-grid">${list.map(card).join("")}</div>`
+      : `<div class="empty">No results found. Try another search or category.</div>`;
+  }
+  function sectionHead(kicker, title, description, link = "") {
+    return `<div class="section-head"><div><div class="kicker">${kicker}</div><h2>${title}</h2><p>${description}</p></div>${link ? `<a class="text-link" href="${link}">Explore all ↗</a>` : ""}</div>`;
+  }
+  function pageHero(kicker, title, description) {
+    return `<div class="page-hero"><div class="kicker">${kicker}</div><h1>${title}</h1><p>${description}</p></div>`;
+  }
+
+  function homePage() {
+    const featured = ["forest-cabin", "medieval-fortress", "colour-palettes", "cinematic-lighting"]
+      .map(id => items.find(item => item.id === id)).filter(Boolean);
+    return `
+      <section class="hero">
+        <div class="container hero-content">
+          <div class="eyebrow">Your world. Your rules.</div>
+          <h1>BUILD YOUR<br><span>OWN UNIVERSE.</span></h1>
+          <p>A creative hub for Minecraft builders and explorers. Discover projects, learn new techniques, organise your ideas and find inspiration for your next world.</p>
+          <div class="actions">
+            <a class="primary" href="#explore">Explore BlockWorld ↗</a>
+            <a class="secondary" href="#tools">Open creative tools</a>
+          </div>
+          <div class="hero-stats">
+            <div><strong>07</strong><span>Explore categories</span></div>
+            <div><strong>03+</strong><span>Creative tools planned</span></div>
+            <div><strong>∞</strong><span>Ways to build</span></div>
+          </div>
+        </div>
+      </section>
+      <section class="section container">
+        ${sectionHead("A WORLD OF POSSIBILITIES","Explore the universe","Find a starting point for your next adventure.")}
+        <div class="feature-grid">
+          ${Object.entries(categories).slice(0,4).map(([key, value]) => `
+            <article class="feature">
+              <div class="feature-icon">${({builds:"▦",mods:"⚙","resource-packs":"◈",shaders:"☼",maps:"⌖",guides:"⌘",seeds:"▲"})[key]}</div>
+              <h3>${value[0]}</h3><p>${value[1]}</p>
+              <a href="#${key}">Explore ${value[0]} ↗</a>
+            </article>`).join("")}
+        </div>
+      </section>
+      <section class="section section-dark">
+        <div class="container">
+          ${sectionHead("HANDPICKED IDEAS","Featured discoveries","Start with these concepts, then explore the full collection.","#explore")}
+          ${grid(featured)}
+        </div>
+      </section>
+      <section class="section container">
+        ${sectionHead("CREATE SOMETHING NEW","Your creative toolkit","Useful tools for planning builds and organising ideas.","#tools")}
+        <div class="feature-grid">
+          <article class="feature"><div class="feature-icon">▧</div><h3>Block Palette</h3><p>Generate combinations of blocks for different building styles.</p><a href="#tools">Open generator ↗</a></article>
+          <article class="feature"><div class="feature-icon">☑</div><h3>Build Planner</h3><p>Write down your next project and keep track of materials.</p><a href="#tools">Plan a build ↗</a></article>
+          <article class="feature"><div class="feature-icon">♥</div><h3>Saved Ideas</h3><p>Keep your favourite entries in one place on this device.</p><a href="#favorites">View saved ↗</a></article>
+          <article class="feature"><div class="feature-icon">⌕</div><h3>Search</h3><p>Find a topic across the site's current collection.</p><a href="#explore">Search collection ↗</a></article>
+        </div>
+      </section>
+      <section class="container"><div class="cta"><div><h2>Your next world starts with an idea.</h2><p>Explore the collection and turn inspiration into your next project.</p></div><a class="primary" href="#builds">Find your next build ↗</a></div></section>`;
+  }
+
+  function catalogPage(category, query = "") {
+    const meta = categories[category];
+    const filtered = items.filter(item =>
+      item.category === category &&
+      `${item.title} ${item.description} ${item.type} ${item.tag}`.toLowerCase().includes(query.toLowerCase())
+    );
+    return `<section class="container">
+      ${pageHero("THE BLOCKWORLD COLLECTION",meta[0],meta[1])}
+      <div class="toolbar">
+        <div class="search"><input id="catalogSearch" type="search" placeholder="Search ${meta[0].toLowerCase()}..." value="${escapeHTML(query)}" aria-label="Search ${meta[0]}"></div>
+        <a class="secondary" href="#explore">All categories</a>
+      </div>
+      <p class="muted" id="catalogCount">${filtered.length} entries in this collection</p>
+      <div id="catalogResults">${grid(filtered)}</div>
+    </section>`;
+  }
+
+  function explorePage(query = "") {
+    const filtered = items.filter(item =>
+      `${item.title} ${item.description} ${item.category} ${item.type} ${item.tag}`.toLowerCase().includes(query.toLowerCase())
+    );
+    return `<section class="container">
+      ${pageHero("DISCOVER SOMETHING NEW","Explore BlockWorld","Search all current entries, from building inspiration to practical guides and creative tools.")}
+      <div class="toolbar">
+        <div class="search"><input id="globalSearch" type="search" placeholder="Search all discoveries..." value="${escapeHTML(query)}"></div>
+        <select id="categorySelect" aria-label="Filter category">
+          <option value="all">All categories</option>
+          ${Object.entries(categories).map(([key,value])=>`<option value="${key}">${value[0]}</option>`).join("")}
+        </select>
+      </div>
+      <p class="muted" id="exploreCount">${filtered.length} discoveries</p>
+      <div id="exploreResults">${grid(filtered)}</div>
+    </section>`;
+  }
+
+  function detailPage(category, id) {
+    const item = items.find(entry => entry.id === id && entry.category === category);
+    if (!item) return `<section class="container">${pageHero("NOT FOUND","This entry doesn't exist","Return to the collection and choose another entry.")}<a class="primary" href="#explore">Back to Explore</a></section>`;
+    const saved = getFavorites().includes(item.id);
+    const related = items.filter(entry => entry.category === category && entry.id !== id).slice(0,3);
+    return `<section class="container">
+      <div class="page-hero"><div class="kicker">${escapeHTML(item.tag || item.category)}</div><h1>${escapeHTML(item.title)}</h1><p>${escapeHTML(item.description)}</p><div class="tag-row"><span class="tag">${escapeHTML(item.type)}</span><span class="tag">${escapeHTML(item.difficulty || "All levels")}</span><span class="tag">${escapeHTML(item.version || "Version varies")}</span></div></div>
+      <div class="detail-layout">
+        <div>
+          <div class="detail-art">${escapeHTML(item.symbol || "▦")}</div>
+          <div class="detail-panel" style="margin-top:18px">
+            <h2>Overview</h2><p>${escapeHTML(item.description)}</p>
+            <h2>How to get started</h2>
+            <ol>${(item.steps || ["Review the details and plan your project.","Check compatibility before installing files.","Test your idea in a separate world."]).map(step=>`<li>${escapeHTML(step)}</li>`).join("")}</ol>
+          </div>
+        </div>
+        <aside class="detail-panel">
+          <h2>Project details</h2>
+          <p><strong>Category:</strong> ${escapeHTML(categories[item.category]?.[0] || item.category)}</p>
+          <p><strong>Type:</strong> ${escapeHTML(item.type || "General")}</p>
+          <p><strong>Difficulty:</strong> ${escapeHTML(item.difficulty || "Varies")}</p>
+          <p><strong>Compatibility:</strong> ${escapeHTML(item.version || "Check the original project")}</p>
+          <h3>Suggested materials / topics</h3>
+          <div class="tag-row">${(item.blocks || []).map(block=>`<span class="tag">${escapeHTML(block)}</span>`).join("")}</div>
+          <button class="primary" data-favorite="${item.id}">${saved ? "♥ Saved to favorites" : "♡ Add to favorites"}</button>
+          <p class="muted">For mods, maps and resource packs, always verify the original creator's instructions, version support and licence before downloading.</p>
+        </aside>
+      </div>
+      ${related.length ? `<section class="section">${sectionHead("KEEP EXPLORING","Related entries","More ideas from the same category.")}${grid(related)}</section>` : ""}
+      <p><a class="text-link" href="#${item.category}">← Back to ${escapeHTML(categories[item.category][0])}</a></p>
+    </section>`;
+  }
+
+  function favoritesPage() {
+    const ids = getFavorites();
+    const saved = items.filter(item => ids.includes(item.id));
+    return `<section class="container">
+      ${pageHero("YOUR PERSONAL COLLECTION","Saved discoveries","Your favourite ideas are saved locally in this browser on this device.")}
+      <div class="toolbar"><button class="secondary" id="clearFavorites">Clear all saved items</button><a class="primary" href="#explore">Discover more ↗</a></div>
+      ${grid(saved)}
+    </section>`;
+  }
+
+  function toolsPage() {
+    return `<section class="container">
+      ${pageHero("BUILT FOR CREATORS","Creative tools","Practical tools to organise your ideas, plan materials and prepare your next Minecraft build.")}
+      <div class="tool-grid">
+        <section class="tool-panel">
+          <div class="kicker">TOOL 01</div><h3>Block Palette Generator</h3>
+          <p class="muted">Choose a style to create a set of matching block textures.</p>
+          <label for="paletteStyle">Building style</label>
+          <select class="field" id="paletteStyle">${Object.keys(palettes).map(name=>`<option>${name}</option>`).join("")}</select>
+          <button class="primary" id="generatePalette">Generate palette ↗</button>
+          <div id="paletteResults" class="swatches"></div>
+          <p class="muted" id="paletteDescription">Choose a style to get started.</p>
+        </section>
+        <section class="tool-panel">
+          <div class="kicker">TOOL 02</div><h3>Build Planner</h3>
+          <p class="muted">Create a project checklist. It is stored locally in this browser.</p>
+          <label for="projectName">Project name</label>
+          <input class="field" id="projectName" placeholder="e.g. My survival base">
+          <label for="projectNotes">Notes and materials</label>
+          <textarea class="field" id="projectNotes" rows="4" placeholder="List your ideas, blocks and tasks..."></textarea>
+          <button class="primary" id="saveProject">Save project ↗</button>
+          <div id="projectStatus" class="muted"></div>
+        </section>
+        <section class="tool-panel">
+          <div class="kicker">TOOL 03</div><h3>Build Checklist</h3>
+          <p class="muted">Tick off the planning steps as you work.</p>
+          <div id="buildChecklist">
+            ${["Choose a location","Pick a block palette","Sketch the silhouette","Gather materials","Build the main structure","Add lighting and details","Finish the surroundings"].map((task,i)=>`<label class="checklist"><input type="checkbox" data-task="${i}"> ${task}</label>`).join("")}
+          </div>
+          <button class="secondary" id="resetChecklist">Reset checklist</button>
+        </section>
+        <section class="tool-panel">
+          <div class="kicker">TOOL 04</div><h3>Quick Crafting Reference</h3>
+          <p class="muted">A few basic crafting reminders. This is a starter reference, not a complete recipe database.</p>
+          <div class="list-row"><span>Crafting Table<small>Four planks of any matching wood type</small></span><span class="tag">UTILITY</span></div>
+          <div class="list-row"><span>Chest<small>Eight planks arranged around the crafting grid</small></span><span class="tag">STORAGE</span></div>
+          <div class="list-row"><span>Torches<small>Stick and coal or charcoal</small></span><span class="tag">LIGHT</span></div>
+          <p class="muted">Recipe details can vary by edition or game mechanics. Check the recipe book in your game for confirmation.</p>
+        </section>
+      </div>
+      <section class="section">
+        ${sectionHead("YOUR WORKSPACE","Saved build project","The project you save here stays in this browser.")}
+        <div id="savedProject" class="detail-panel"><p class="muted">No project saved yet.</p></div>
+      </section>
+    </section>`;
+  }
+
+  function guidesPage() {
+    const guides = items.filter(item => item.category === "guides");
+    return `<section class="container">
+      ${pageHero("LEARN BY BUILDING","Guides & tutorials","Practical techniques for stronger builds, better palettes and more organised survival worlds.")}
+      <div class="guide-list">${guides.map(item=>`
+        <article class="guide"><div class="kicker">${escapeHTML(item.tag)}</div><h3>${escapeHTML(item.title)}</h3><p>${escapeHTML(item.description)}</p><p><a class="text-link" href="#detail/${item.category}/${item.id}">Read guide ↗</a></p></article>`).join("")}</div>
+    </section>`;
+  }
+
+  function aboutPage() {
+    return `<section class="container">
+      ${pageHero("ABOUT THIS PROJECT","Welcome to BlockWorld","A creative fan project for Minecraft builders, explorers and curious players.")}
+      <div class="detail-layout">
+        <article class="detail-panel"><h2>Our idea</h2><p>BlockWorld brings building inspiration, learning resources and creative planning tools together in one place. The goal is to help players move from an idea to a plan for their next world.</p><h2>What you can explore</h2><p>Browse building concepts, discover mod and resource-pack themes, learn from guides and use the tools to organise a project.</p></article>
+        <article class="detail-panel"><h2>About Minecraft content</h2><p>BlockWorld is an independent fan project and is not affiliated with Mojang or Microsoft. Names, assets and project references belong to their respective owners.</p><p>Compatibility and download availability must be checked with each original creator. We do not claim that example entries are verified downloads.</p></article>
+      </div>
+    </section>`;
+  }
+
+  function render() {
+    const parts = decodeURIComponent(location.hash.slice(1) || "home").split("/");
+    const route = parts[0];
+    const query = new URLSearchParams(location.search).get("q") || "";
+    if (route === "home") app.innerHTML = homePage();
+    else if (route === "explore" || route === "search") app.innerHTML = explorePage(query);
+    else if (route === "detail") app.innerHTML = detailPage(parts[1], parts[2]);
+    else if (route === "tools") app.innerHTML = toolsPage();
+    else if (route === "favorites") app.innerHTML = favoritesPage();
+    else if (route === "about") app.innerHTML = aboutPage();
+    else if (route === "guides-all") app.innerHTML = guidesPage();
+    else if (categories[route]) app.innerHTML = catalogPage(route);
+    else app.innerHTML = homePage();
+
+    document.querySelectorAll("#mainNav a").forEach(link => {
+      link.classList.toggle("active", link.getAttribute("href") === "#" + route);
+    });
+    document.getElementById("mainNav").classList.remove("open");
+    window.scrollTo(0,0);
+    bindPageEvents();
+  }
+
+  function bindPageEvents() {
+    const catalogSearch = document.getElementById("catalogSearch");
+    if (catalogSearch) {
+      catalogSearch.addEventListener("input", () => {
+        const route = location.hash.slice(1);
+        const filtered = items.filter(item => item.category === route &&
+          `${item.title} ${item.description} ${item.type} ${item.tag}`.toLowerCase().includes(catalogSearch.value.toLowerCase()));
+        document.getElementById("catalogResults").innerHTML = grid(filtered);
+        document.getElementById("catalogCount").textContent = `${filtered.length} entries in this collection`;
+      });
+    }
+    const globalSearch = document.getElementById("globalSearch");
+    const categorySelect = document.getElementById("categorySelect");
+    if (globalSearch) {
+      const update = () => {
+        const category = categorySelect.value;
+        const query = globalSearch.value.toLowerCase();
+        const filtered = items.filter(item =>
+          (category === "all" || item.category === category) &&
+          `${item.title} ${item.description} ${item.category} ${item.type} ${item.tag}`.toLowerCase().includes(query)
+        );
+        document.getElementById("exploreResults").innerHTML = grid(filtered);
+        document.getElementById("exploreCount").textContent = `${filtered.length} discoveries`;
+      };
+      globalSearch.addEventListener("input", update);
+      categorySelect.addEventListener("change", update);
+    }
+    document.querySelectorAll("[data-favorite]").forEach(button => {
+      button.addEventListener("click", () => {
+        const id = button.dataset.favorite;
+        let saved = getFavorites();
+        if (saved.includes(id)) {
+          saved = saved.filter(value => value !== id);
+          toast("Removed from favorites.");
+        } else {
+          saved.push(id);
+          toast("Added to favorites.");
+        }
+        saveFavorites(saved);
+        if (location.hash.startsWith("#favorites")) render();
+        else if (location.hash.startsWith("#detail/")) render();
+        else {
+          const old = button.textContent;
+          button.textContent = old.includes("Saved") ? "♡ Save" : "♥ Saved";
+        }
+      });
+    });
+    const clear = document.getElementById("clearFavorites");
+    if (clear) clear.addEventListener("click", () => {
+      saveFavorites([]);
+      render();
+      toast("Favorites cleared.");
+    });
+
+    const paletteButton = document.getElementById("generatePalette");
+    if (paletteButton) {
+      const generate = () => {
+        const name = document.getElementById("paletteStyle").value;
+        const blocks = palettes[name];
+        document.getElementById("paletteResults").innerHTML = blocks.map(block => `
+          <div class="swatch"><img src="${textureURL(block)}" alt="${escapeHTML(block)} texture" loading="lazy" onerror="this.style.opacity='.25'"><p>${escapeHTML(block)}</p></div>
+        `).join("");
+        document.getElementById("paletteDescription").textContent = `${name} palette — ${blocks.length} suggested blocks.`;
+      };
+      paletteButton.addEventListener("click", generate);
+      document.getElementById("paletteStyle").addEventListener("change", generate);
+      generate();
+    }
+
+    const saveProject = document.getElementById("saveProject");
+    if (saveProject) {
+      const loadProject = () => {
+        try { return JSON.parse(localStorage.getItem("bw-project") || "null"); }
+        catch { return null; }
+      };
+      const showProject = () => {
+        const project = loadProject();
+        const box = document.getElementById("savedProject");
+        const status = document.getElementById("projectStatus");
+        if (!project) {
+          box.innerHTML = '<p class="muted">No project saved yet.</p>';
+          if (status) status.textContent = "";
+          return;
+        }
+        box.innerHTML = `<h3>${escapeHTML(project.name)}</h3><p>${escapeHTML(project.notes || "No notes added.")}</p><button class="secondary" id="deleteProject">Delete saved project</button>`;
+        if (status) status.textContent = "Project saved in this browser.";
+        const deleteButton = document.getElementById("deleteProject");
+        if (deleteButton) deleteButton.addEventListener("click", () => {
+          localStorage.removeItem("bw-project");
+          showProject();
+          toast("Project deleted.");
+        });
+      };
+      saveProject.addEventListener("click", () => {
+        const name = document.getElementById("projectName").value.trim();
+        const notes = document.getElementById("projectNotes").value.trim();
+        if (!name) return toast("Enter a project name first.");
+        try {
+          localStorage.setItem("bw-project", JSON.stringify({name,notes}));
+          showProject();
+          toast("Project saved.");
+        } catch {
+          toast("Could not save. Browser storage may be disabled.");
+        }
+      });
+      showProject();
+    }
+
+    document.querySelectorAll("[data-task]").forEach(box => {
+      const key = "bw-task-" + box.dataset.task;
+      try { box.checked = localStorage.getItem(key) === "true"; } catch {}
+      box.addEventListener("change", () => {
+        try { localStorage.setItem(key, String(box.checked)); } catch {}
+      });
+    });
+    const reset = document.getElementById("resetChecklist");
+    if (reset) reset.addEventListener("click", () => {
+      document.querySelectorAll("[data-task]").forEach(box => {
+        box.checked = false;
+        try { localStorage.removeItem("bw-task-" + box.dataset.task); } catch {}
+      });
+      toast("Checklist reset.");
+    });
+  }
+
+  document.getElementById("menuToggle").addEventListener("click", () => {
+    document.getElementById("mainNav").classList.toggle("open");
+  });
+  document.getElementById("year").textContent = new Date().getFullYear();
+  window.addEventListener("hashchange", render);
+  render();
+})();
